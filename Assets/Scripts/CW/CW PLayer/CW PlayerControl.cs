@@ -5,18 +5,38 @@ public class CWPlayerControl : MonoBehaviour{
 	Rigidbody2D rb;
 	Vector2 move_direction;
 	public float speed = 125f, max_speed = 5f, jump_force = 50;
+	public float max_slope_angle = 40f;
 	public bool is_grounded = false;
+	bool jump_pressed = false;
+	bool on_steep_slope = false;
 	void Start(){
-		Debug.Log("Это Start и я сработал!");
 		move = InputSystem.actions.FindAction("Move");
 		jump = InputSystem.actions.FindAction("Jump");
 		rb = GetComponent<Rigidbody2D>();
 	}
-	void FixedUpdate(){
+	void Update(){
 		move_direction = move.ReadValue<Vector2>();
-		Debug.Log(move_direction);
-		if (jump.IsPressed() && is_grounded) rb.AddForceY(jump_force);
-		if(rb.linearVelocity.magnitude <= max_speed)
-		rb.AddForceX(move_direction.x*speed);
+		if (jump.WasPressedThisFrame() && is_grounded) jump_pressed = true;
+	}
+	void OnCollisionStay2D(Collision2D col){
+		on_steep_slope = false;
+		foreach (ContactPoint2D contact in col.contacts){
+			float angle = Vector2.Angle(contact.normal, Vector2.up);
+			if (angle > max_slope_angle){
+				on_steep_slope = true;
+				break;
+			}
+		}
+	}
+	void OnCollisionExit2D(Collision2D col){
+		on_steep_slope = false;
+	}
+	void FixedUpdate(){
+		if (jump_pressed){
+			rb.AddForceY(jump_force);
+			jump_pressed = false;
+		}
+		if (!on_steep_slope && Mathf.Abs(rb.linearVelocity.x) <= max_speed)
+			rb.AddForceX(move_direction.x * speed);
 	}
 }

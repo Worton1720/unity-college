@@ -3,17 +3,12 @@ using UnityEngine;
 public class CameraControl : MonoBehaviour
 {
 	public GameObject target;
-	public float dead_zone, speed;
+	public float speed = 5f;
 	private void Awake(){
 		target = GameObject.FindGameObjectWithTag("Player");
 	}
 	void Update(){
-		if (Vector2.Distance(transform.position, target.transform.position) > dead_zone){
-			transform.position =  Vector3.MoveTowards(
-				transform.position,
-				target.transform.position + new Vector3(0, 0, -10),
-				speed * Time.deltaTime
-				);
-		}
+		Vector3 targetPos = target.transform.position + new Vector3(0, 0, -10);
+		transform.position = Vector3.Lerp(transform.position, targetPos, speed * Time.deltaTime);
 	}
 }

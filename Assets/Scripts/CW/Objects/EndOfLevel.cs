@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public class EndOfLevel : MonoBehaviour{
-	UIDocument interface_document;
+	/*UIDocument interface_document;
 	Button continue_button;
 	Label win_text;
     Button important_button;
@@ -32,5 +32,12 @@ public class EndOfLevel : MonoBehaviour{
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
-    }
+    }*/
+
+	private void OnTriggerEnter2D(Collider2D collision){
+		if (collision.CompareTag("Player"))
+		{
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex+1);
+		}
+	}
 }

@@ -1,16 +1,20 @@
 using UnityEngine;
 public class CWJumpTrigger : MonoBehaviour{
-    GameObject player;
-	void Start(){
-        player = GameObject.FindGameObjectWithTag("Player");
+    CWPlayerControl playerControl;
+    int groundCount = 0;
+    void Start(){
+        playerControl = GameObject.FindGameObjectWithTag("Player").GetComponent<CWPlayerControl>();
     }
-	void Update(){}
     private void OnTriggerEnter2D(Collider2D collision){
-        if(collision.gameObject.tag == "Ground")
-        player.GetComponent<CWPlayerControl>().is_grounded = true;
+        if(!collision.isTrigger){
+            groundCount++;
+            playerControl.is_grounded = true;
+        }
     }
     private void OnTriggerExit2D(Collider2D collision){
-        if(collision.gameObject.tag == "Ground")
-        player.GetComponent<CWPlayerControl>().is_grounded = false;
+        if(!collision.isTrigger){
+            groundCount--;
+            playerControl.is_grounded = groundCount > 0;
+        }
     }
 }
